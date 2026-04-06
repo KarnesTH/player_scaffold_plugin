@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://bc6usb7hn1drg"]
+
+[ext_resource type="Script" uid="uid://d1w77l223evsm" path="res://addons/player_scaffolder/ui/create_player_dialog.gd" id="1_tjcdi"]
+
+[node name="CreatePlayerDialog" type="AcceptDialog" unique_id=1599512352]
+oversampling_override = 1.0
+title = "Player Scaffolder"
+position = Vector2i(0, 36)
+size = Vector2i(800, 600)
+visible = true
+script = ExtResource("1_tjcdi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1470448740]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 792.0
+offset_bottom = 551.0
+
+[node name="GerneOBtn" type="OptionButton" parent="VBoxContainer" unique_id=1394230569]
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "Horror"
+popup/item_0/id = 0
+popup/item_1/text = "Survival"
+popup/item_1/id = 1
+popup/item_2/text = "Simulator"
+popup/item_2/id = 2
+popup/item_3/text = "Shooter – Classic"
+popup/item_3/id = 3
+popup/item_4/text = "Shooter – BR/Extraction"
+popup/item_4/id = 4
+
+[node name="CameraTypeOBtn" type="OptionButton" parent="VBoxContainer" unique_id=770973175]
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "FPS"
+popup/item_0/id = 0
+popup/item_1/text = "Third Person"
+popup/item_1/id = 1
+popup/item_2/text = "FPS + TP Toggle"
+popup/item_2/id = 2
+
+[node name="MovementGC" type="GridContainer" parent="VBoxContainer" unique_id=1735022498]
+layout_mode = 2
+
+[node name="SprintCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=864328756]
+layout_mode = 2
+button_pressed = true
+text = "Sprint"
+
+[node name="CrouchCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=2058808921]
+layout_mode = 2
+button_pressed = true
+text = "Crouch"
+
+[node name="JumpCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=1709788903]
+layout_mode = 2
+text = "Jump"
+
+[node name="ProneCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=2052421823]
+layout_mode = 2
+text = "Prone"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1174465947]
+layout_mode = 2
+
+[node name="HealthSystemCB" type="CheckBox" parent="VBoxContainer" unique_id=417912883]
+layout_mode = 2
+button_pressed = true
+text = "Health System"
+
+[node name="InventoryCB" type="CheckBox" parent="VBoxContainer" unique_id=810688670]
+layout_mode = 2
+button_pressed = true
+text = "Inventory"
+
+[node name="StanimaCB" type="CheckBox" parent="VBoxContainer" unique_id=2095700560]
+layout_mode = 2
+text = "Stanima"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1881164073]
+layout_mode = 2
+
+[node name="PlayerNameLE" type="LineEdit" parent="VBoxContainer" unique_id=251358252]
+layout_mode = 2
+text = "Player"
+placeholder_text = "Player name"
+
+[node name="TargetPathLE" type="LineEdit" parent="VBoxContainer" unique_id=1443760247]
+layout_mode = 2
+text = "res://scenes/player/"
+placeholder_text = "Your goal path"
+
+[node name="ScriptPathLE" type="LineEdit" parent="VBoxContainer" unique_id=1543401181]
+layout_mode = 2
+text = "res://scripts/player/"
+
+[node name="GenerateBtn" type="Button" parent="VBoxContainer" unique_id=1212651351]
+layout_mode = 2
+text = "Generate"
