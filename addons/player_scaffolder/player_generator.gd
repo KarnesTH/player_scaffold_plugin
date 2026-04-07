@@ -59,7 +59,7 @@ static func generate(config: Dictionary) -> void:
 	var file_path = target_path + config["player_name"].to_snake_case() + ".tscn"
 	ResourceSaver.save(packed, file_path)
 	EditorInterface.open_scene_from_path(file_path)
-	print("Player Scaffolder: Scene erstellt → ", file_path)
+	print("Player Scaffolder: Scene generated → ", file_path)
  
 static func _write_script(script_name: String, target_path: String, content: String) -> void:
 	var dst = target_path + "%s.gd" % script_name
@@ -175,7 +175,7 @@ static func _register_inputs(config: Dictionary) -> void:
 		})
 	ProjectSettings.save()
 	InputMap.load_from_project_settings()
-	print("Player Scaffolder: Input Actions registriert — Editor-Neustart empfohlen damit sie im Input Map Editor erscheinen.")
+	print("Player Scaffolder: Input actions have been registered — it is recommended that you restart the editor so that they appear in the Input Map Editor.")
  
 static func _build_player_script(config: Dictionary) -> String:
 	var is_shooter: bool = config["genre"].begins_with("Shooter")

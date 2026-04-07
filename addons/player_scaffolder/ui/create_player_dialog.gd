@@ -1,7 +1,6 @@
 @tool
 extends AcceptDialog
-
-
+ 
 const PRESETS = {
 	"Horror": { "sprint": true, "crouch": true, "jump": false, "prone": false, "inventory": true, "health": true, "stamina": false },
 	"Survival": { "sprint": true, "crouch": true, "jump": true, "prone": false, "inventory": true, "health": true, "stamina": true },
@@ -9,52 +8,76 @@ const PRESETS = {
 	"Shooter – Classic": { "sprint": true, "crouch": true, "jump": true, "prone": false, "inventory": false, "health": true, "stamina": false },
 	"Shooter – BR/Extraction": { "sprint": true, "crouch": true, "jump": true, "prone": true, "inventory": true, "health": true, "stamina": true },
 }
-
+ 
+@onready var genre_btn: OptionButton = %GerneOBtn
+@onready var camera_btn: OptionButton = %CameraTypeOBtn
+@onready var sprint_cb: CheckBox = %SprintCB
+@onready var crouch_cb: CheckBox = %CrouchCB
+@onready var jump_cb: CheckBox = %JumpCB
+@onready var prone_cb: CheckBox = %ProneCB
+@onready var health_cb: CheckBox = %HealthSystemCB
+@onready var inventory_cb: CheckBox = %InventoryCB
+@onready var stamina_cb: CheckBox = %StaminaCB
+@onready var crosshair_cb: CheckBox = %CrosshairCB
+@onready var player_name_le: LineEdit = %PlayerNameLE
+@onready var target_path_le: LineEdit = %TargetPathLE
+@onready var script_path_le: LineEdit = %ScriptPathLE
+@onready var status_lbl: Label = %StatusLbl
+ 
 func _ready() -> void:
 	canceled.connect(hide)
 	confirmed.connect(_on_generate_pressed)
-	for genre in PRESETS.keys():
-		$VBoxContainer/GerneOBtn.add_item(genre)
-	$VBoxContainer/CameraTypeOBtn.add_item("FPS")
-	$VBoxContainer/CameraTypeOBtn.add_item("Third Person")
-	$VBoxContainer/CameraTypeOBtn.add_item("FPS + TP Toggle")
-	$VBoxContainer/GerneOBtn.connect("item_selected", _on_genre_selected)
+	if genre_btn.item_count == 0:
+		for genre in PRESETS.keys():
+			genre_btn.add_item(genre)
+	if camera_btn.item_count == 0:
+		camera_btn.add_item("FPS")
+		camera_btn.add_item("Third Person")
+		camera_btn.add_item("FPS + TP Toggle")
+	genre_btn.connect("item_selected", _on_genre_selected)
 	_on_genre_selected(0)
-
+ 
 func _on_genre_selected(index: int) -> void:
 	var preset = PRESETS.values()[index]
-	$VBoxContainer/MovementGC/SprintCB.button_pressed = preset["sprint"]
-	$VBoxContainer/MovementGC/CrouchCB.button_pressed = preset["crouch"]
-	$VBoxContainer/MovementGC/JumpCB.button_pressed = preset["jump"]
-	$VBoxContainer/MovementGC/ProneCB.button_pressed = preset["prone"]
-	$VBoxContainer/HealthSystemCB.button_pressed = preset["health"]
-	$VBoxContainer/InventoryCB.button_pressed = preset["inventory"]
-	$VBoxContainer/StanimaCB.button_pressed = preset["stamina"]
-
+	sprint_cb.button_pressed = preset["sprint"]
+	crouch_cb.button_pressed = preset["crouch"]
+	jump_cb.button_pressed = preset["jump"]
+	prone_cb.button_pressed = preset["prone"]
+	health_cb.button_pressed = preset["health"]
+	inventory_cb.button_pressed = preset["inventory"]
+	stamina_cb.button_pressed = preset["stamina"]
+ 
 func _get_config() -> Dictionary:
 	return {
-		"genre": $VBoxContainer/GerneOBtn.get_item_text($VBoxContainer/GerneOBtn.selected),
-		"camera": $VBoxContainer/CameraTypeOBtn.selected,
-		"sprint": $VBoxContainer/MovementGC/SprintCB.button_pressed,
-		"crouch": $VBoxContainer/MovementGC/CrouchCB.button_pressed,
-		"jump": $VBoxContainer/MovementGC/JumpCB.button_pressed,
-		"prone": $VBoxContainer/MovementGC/ProneCB.button_pressed,
-		"health": $VBoxContainer/HealthSystemCB.button_pressed,
-		"inventory": $VBoxContainer/InventoryCB.button_pressed,
-		"stamina": $VBoxContainer/StanimaCB.button_pressed,
-		"player_name": $VBoxContainer/PlayerNameLE.text,
-		"target_path": $VBoxContainer/TargetPathLE.text,
-		"script_path": $VBoxContainer/ScriptPathLE.text
+		"genre": genre_btn.get_item_text(genre_btn.selected),
+		"camera": camera_btn.selected,
+		"sprint": sprint_cb.button_pressed,
+		"crouch": crouch_cb.button_pressed,
+		"jump": jump_cb.button_pressed,
+		"prone": prone_cb.button_pressed,
+		"health": health_cb.button_pressed,
+		"inventory": inventory_cb.button_pressed,
+		"stamina": stamina_cb.button_pressed,
+		"crosshair": crosshair_cb.button_pressed,
+		"player_name": player_name_le.text,
+		"target_path": target_path_le.text,
+		"script_path": script_path_le.text,
 	}
-
+ 
 func _on_generate_pressed() -> void:
 	var config = _get_config()
 	if config["player_name"].is_empty():
-		push_error("Player Scaffolder: Player Name darf nicht leer sein.")
+		_set_status("⚠ Player Name cannot be empty.", true)
 		return
 	if config["target_path"].is_empty():
-		push_error("Player Scaffolder: Zielpfad darf nicht leer sein.")
+		_set_status("⚠ Scene Path cannot be empty.", true)
+		return
+	if config["script_path"].is_empty():
+		_set_status("⚠ Script Path cannot be empty.", true)
 		return
 	PlayerGenerator.generate(config)
-	hide()
-	
+	_set_status("✓ Player '%s' created successfully." % config["player_name"], false)
+ 
+func _set_status(text: String, is_error: bool) -> void:
+	status_lbl.text = text
+	status_lbl.modulate = Color.RED if is_error else Color.GREEN

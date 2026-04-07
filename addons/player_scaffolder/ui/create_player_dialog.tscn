@@ -5,21 +5,47 @@
 [node name="CreatePlayerDialog" type="AcceptDialog" unique_id=1599512352]
 oversampling_override = 1.0
 title = "Player Scaffolder"
-position = Vector2i(0, 36)
-size = Vector2i(800, 600)
+initial_position = 1
+size = Vector2i(376, 543)
 visible = true
 script = ExtResource("1_tjcdi")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1470448740]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 792.0
-offset_bottom = 551.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="GerneOBtn" type="OptionButton" parent="VBoxContainer" unique_id=1394230569]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1728682593]
+layout_mode = 2
+
+[node name="LeftSide" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=15306264]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="General" type="PanelContainer" parent="VBoxContainer/HBoxContainer/LeftSide" unique_id=1119819415]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/LeftSide/General" unique_id=996072611]
+layout_mode = 2
+
+[node name="GeneralLbl" type="Label" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=1430892912]
+layout_mode = 2
+text = "General"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=1428242694]
+layout_mode = 2
+
+[node name="GerneOBtn" type="OptionButton" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=1394230569]
+unique_name_in_owner = true
 layout_mode = 2
 selected = 0
-item_count = 5
+item_count = 15
 popup/item_0/text = "Horror"
 popup/item_0/id = 0
 popup/item_1/text = "Survival"
@@ -30,73 +56,176 @@ popup/item_3/text = "Shooter – Classic"
 popup/item_3/id = 3
 popup/item_4/text = "Shooter – BR/Extraction"
 popup/item_4/id = 4
+popup/item_5/text = "Horror"
+popup/item_5/id = 5
+popup/item_6/text = "Survival"
+popup/item_6/id = 6
+popup/item_7/text = "Simulator"
+popup/item_7/id = 7
+popup/item_8/text = "Shooter – Classic"
+popup/item_8/id = 8
+popup/item_9/text = "Shooter – BR/Extraction"
+popup/item_9/id = 9
+popup/item_10/text = "Horror"
+popup/item_10/id = 10
+popup/item_11/text = "Survival"
+popup/item_11/id = 11
+popup/item_12/text = "Simulator"
+popup/item_12/id = 12
+popup/item_13/text = "Shooter – Classic"
+popup/item_13/id = 13
+popup/item_14/text = "Shooter – BR/Extraction"
+popup/item_14/id = 14
 
-[node name="CameraTypeOBtn" type="OptionButton" parent="VBoxContainer" unique_id=770973175]
+[node name="CameraTypeOBtn" type="OptionButton" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=770973175]
+unique_name_in_owner = true
 layout_mode = 2
 selected = 0
-item_count = 3
+item_count = 9
 popup/item_0/text = "FPS"
 popup/item_0/id = 0
 popup/item_1/text = "Third Person"
 popup/item_1/id = 1
 popup/item_2/text = "FPS + TP Toggle"
 popup/item_2/id = 2
+popup/item_3/text = "FPS"
+popup/item_3/id = 3
+popup/item_4/text = "Third Person"
+popup/item_4/id = 4
+popup/item_5/text = "FPS + TP Toggle"
+popup/item_5/id = 5
+popup/item_6/text = "FPS"
+popup/item_6/id = 6
+popup/item_7/text = "Third Person"
+popup/item_7/id = 7
+popup/item_8/text = "FPS + TP Toggle"
+popup/item_8/id = 8
 
-[node name="MovementGC" type="GridContainer" parent="VBoxContainer" unique_id=1735022498]
+[node name="Movement" type="PanelContainer" parent="VBoxContainer/HBoxContainer/LeftSide" unique_id=1558039159]
 layout_mode = 2
 
-[node name="SprintCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=864328756]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/LeftSide/Movement" unique_id=944645482]
+layout_mode = 2
+
+[node name="MovementLbl" type="Label" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer" unique_id=1005027500]
+layout_mode = 2
+text = "Movement"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer" unique_id=764712441]
+layout_mode = 2
+
+[node name="MovementGC" type="GridContainer" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer" unique_id=1735022498]
+layout_mode = 2
+
+[node name="SprintCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer/MovementGC" unique_id=864328756]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Sprint"
 
-[node name="CrouchCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=2058808921]
+[node name="CrouchCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer/MovementGC" unique_id=2058808921]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Crouch"
 
-[node name="JumpCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=1709788903]
+[node name="JumpCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer/MovementGC" unique_id=1709788903]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Jump"
 
-[node name="ProneCB" type="CheckBox" parent="VBoxContainer/MovementGC" unique_id=2052421823]
+[node name="ProneCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/LeftSide/Movement/VBoxContainer/MovementGC" unique_id=2052421823]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Prone"
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1174465947]
+[node name="RightSide" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=928333170]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Systems" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RightSide" unique_id=732964506]
 layout_mode = 2
 
-[node name="HealthSystemCB" type="CheckBox" parent="VBoxContainer" unique_id=417912883]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RightSide/Systems" unique_id=1399292538]
+layout_mode = 2
+
+[node name="SystemsLbl" type="Label" parent="VBoxContainer/HBoxContainer/RightSide/Systems/VBoxContainer" unique_id=832011386]
+layout_mode = 2
+text = "Systems"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer/RightSide/Systems/VBoxContainer" unique_id=260559053]
+layout_mode = 2
+
+[node name="HealthSystemCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/RightSide/Systems/VBoxContainer" unique_id=417912883]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Health System"
 
-[node name="InventoryCB" type="CheckBox" parent="VBoxContainer" unique_id=810688670]
+[node name="InventoryCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/RightSide/Systems/VBoxContainer" unique_id=810688670]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Inventory"
 
-[node name="StanimaCB" type="CheckBox" parent="VBoxContainer" unique_id=2095700560]
+[node name="StaminaCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/RightSide/Systems/VBoxContainer" unique_id=2095700560]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Stanima"
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=1881164073]
+[node name="UI" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RightSide" unique_id=1829742993]
 layout_mode = 2
 
-[node name="PlayerNameLE" type="LineEdit" parent="VBoxContainer" unique_id=251358252]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RightSide/UI" unique_id=1103656332]
 layout_mode = 2
-text = "Player"
-placeholder_text = "Player name"
 
-[node name="TargetPathLE" type="LineEdit" parent="VBoxContainer" unique_id=1443760247]
+[node name="UILbl" type="Label" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=1356962030]
 layout_mode = 2
-text = "res://scenes/player/"
-placeholder_text = "Your goal path"
+text = "UI"
 
-[node name="ScriptPathLE" type="LineEdit" parent="VBoxContainer" unique_id=1543401181]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=776018827]
 layout_mode = 2
-text = "res://scripts/player/"
 
-[node name="GenerateBtn" type="Button" parent="VBoxContainer" unique_id=1212651351]
+[node name="CrosshairCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=210275962]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Crosshair"
+
+[node name="Output" type="PanelContainer" parent="VBoxContainer" unique_id=1506236800]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Output" unique_id=182503534]
+layout_mode = 2
+
+[node name="OutputLbl" type="Label" parent="VBoxContainer/Output/VBoxContainer" unique_id=545844967]
+layout_mode = 2
+text = "Output"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Output/VBoxContainer" unique_id=295945413]
+layout_mode = 2
+
+[node name="PlayerNameLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=251358252]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Your player name"
+
+[node name="TargetPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1443760247]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Your target path"
+
+[node name="ScriptPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1543401181]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Your script path"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/Output/VBoxContainer" unique_id=100557218]
+layout_mode = 2
+
+[node name="GenerateBtn" type="Button" parent="VBoxContainer/Output/VBoxContainer" unique_id=1212651351]
 layout_mode = 2
 text = "Generate"
+
+[node name="StatusLbl" type="Label" parent="VBoxContainer" unique_id=2124647034]
+unique_name_in_owner = true
+layout_mode = 2

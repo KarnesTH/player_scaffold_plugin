@@ -5,10 +5,10 @@ var dialog
 
 
 func _enter_tree() -> void:
-	add_tool_menu_item("Create Player...", _on_menu_pressed)
+	add_tool_menu_item("Player Scaffolder/Create Player...", _on_menu_pressed)
 
 func _exit_tree() -> void:
-	remove_tool_menu_item("Create Player...")
+	remove_tool_menu_item("Player Scaffolder/Create Player...")
 	if dialog:
 		dialog.queue_free()
 
