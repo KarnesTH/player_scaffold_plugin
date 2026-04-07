@@ -52,6 +52,7 @@ static func generate(config: Dictionary) -> void:
 	if config["stamina"]:
 		_add_node(root, "StaminaSystem", script_path)
 	_register_inputs(config)
+	_build_hud(root)
 	EditorInterface.get_resource_filesystem().scan()
 	root.set_script(load(script_path + "player_controller.gd"))
 	var packed := PackedScene.new()
@@ -177,6 +178,44 @@ static func _register_inputs(config: Dictionary) -> void:
 	InputMap.load_from_project_settings()
 	print("Player Scaffolder: Input actions have been registered — it is recommended that you restart the editor so that they appear in the Input Map Editor.")
  
+static func _build_hud(root: Node) -> void:
+	var canvas := CanvasLayer.new()
+	canvas.name = "HUD"
+	root.add_child(canvas)
+	canvas.owner = root
+	var control := Control.new()
+	control.name = "Control"
+	control.set_anchors_preset(Control.PRESET_FULL_RECT)
+	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(control)
+	control.owner = root
+	var vbox := VBoxContainer.new()
+	vbox.name = "VBoxContainer"
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	control.add_child(vbox)
+	vbox.owner = root
+	var crosshair := Panel.new()
+	crosshair.name = "Crosshair"
+	crosshair.custom_minimum_size = Vector2(4, 4)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.WHITE
+	style.corner_radius_top_left = 2
+	style.corner_radius_top_right = 2
+	style.corner_radius_bottom_left = 2
+	style.corner_radius_bottom_right = 2
+	crosshair.add_theme_stylebox_override("panel", style)
+	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(crosshair)
+	crosshair.owner = root
+	var interaction_lbl := Label.new()
+	interaction_lbl.name = "InteractionLbl"
+	interaction_lbl.text = ""
+	interaction_lbl.visible = false
+	interaction_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(interaction_lbl)
+	interaction_lbl.owner = root
+
 static func _build_player_script(config: Dictionary) -> String:
 	var is_shooter: bool = config["genre"].begins_with("Shooter")
 	var has_tp: bool = config["camera"] == 2

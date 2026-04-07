@@ -8,6 +8,9 @@ title = "Player Scaffolder"
 initial_position = 1
 size = Vector2i(376, 543)
 visible = true
+ok_button_text = "Generate"
+dialog_hide_on_ok = false
+dialog_close_on_escape = false
 script = ExtResource("1_tjcdi")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1470448740]
@@ -44,62 +47,10 @@ layout_mode = 2
 [node name="GerneOBtn" type="OptionButton" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=1394230569]
 unique_name_in_owner = true
 layout_mode = 2
-selected = 0
-item_count = 15
-popup/item_0/text = "Horror"
-popup/item_0/id = 0
-popup/item_1/text = "Survival"
-popup/item_1/id = 1
-popup/item_2/text = "Simulator"
-popup/item_2/id = 2
-popup/item_3/text = "Shooter – Classic"
-popup/item_3/id = 3
-popup/item_4/text = "Shooter – BR/Extraction"
-popup/item_4/id = 4
-popup/item_5/text = "Horror"
-popup/item_5/id = 5
-popup/item_6/text = "Survival"
-popup/item_6/id = 6
-popup/item_7/text = "Simulator"
-popup/item_7/id = 7
-popup/item_8/text = "Shooter – Classic"
-popup/item_8/id = 8
-popup/item_9/text = "Shooter – BR/Extraction"
-popup/item_9/id = 9
-popup/item_10/text = "Horror"
-popup/item_10/id = 10
-popup/item_11/text = "Survival"
-popup/item_11/id = 11
-popup/item_12/text = "Simulator"
-popup/item_12/id = 12
-popup/item_13/text = "Shooter – Classic"
-popup/item_13/id = 13
-popup/item_14/text = "Shooter – BR/Extraction"
-popup/item_14/id = 14
 
 [node name="CameraTypeOBtn" type="OptionButton" parent="VBoxContainer/HBoxContainer/LeftSide/General/VBoxContainer" unique_id=770973175]
 unique_name_in_owner = true
 layout_mode = 2
-selected = 0
-item_count = 9
-popup/item_0/text = "FPS"
-popup/item_0/id = 0
-popup/item_1/text = "Third Person"
-popup/item_1/id = 1
-popup/item_2/text = "FPS + TP Toggle"
-popup/item_2/id = 2
-popup/item_3/text = "FPS"
-popup/item_3/id = 3
-popup/item_4/text = "Third Person"
-popup/item_4/id = 4
-popup/item_5/text = "FPS + TP Toggle"
-popup/item_5/id = 5
-popup/item_6/text = "FPS"
-popup/item_6/id = 6
-popup/item_7/text = "Third Person"
-popup/item_7/id = 7
-popup/item_8/text = "FPS + TP Toggle"
-popup/item_8/id = 8
 
 [node name="Movement" type="PanelContainer" parent="VBoxContainer/HBoxContainer/LeftSide" unique_id=1558039159]
 layout_mode = 2
@@ -173,24 +124,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Stanima"
 
-[node name="UI" type="PanelContainer" parent="VBoxContainer/HBoxContainer/RightSide" unique_id=1829742993]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/RightSide/UI" unique_id=1103656332]
-layout_mode = 2
-
-[node name="UILbl" type="Label" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=1356962030]
-layout_mode = 2
-text = "UI"
-
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=776018827]
-layout_mode = 2
-
-[node name="CrosshairCB" type="CheckBox" parent="VBoxContainer/HBoxContainer/RightSide/UI/VBoxContainer" unique_id=210275962]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Crosshair"
-
 [node name="Output" type="PanelContainer" parent="VBoxContainer" unique_id=1506236800]
 layout_mode = 2
 
@@ -207,24 +140,20 @@ layout_mode = 2
 [node name="PlayerNameLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=251358252]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Player"
 placeholder_text = "Your player name"
 
 [node name="TargetPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1443760247]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "Your target path"
+text = "res://Scenes/Player/"
+placeholder_text = "res://scenes/player/"
 
 [node name="ScriptPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1543401181]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "Your script path"
-
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/Output/VBoxContainer" unique_id=100557218]
-layout_mode = 2
-
-[node name="GenerateBtn" type="Button" parent="VBoxContainer/Output/VBoxContainer" unique_id=1212651351]
-layout_mode = 2
-text = "Generate"
+text = "res://Scripts/Player/"
+placeholder_text = "res://Scripts/Player/"
 
 [node name="StatusLbl" type="Label" parent="VBoxContainer" unique_id=2124647034]
 unique_name_in_owner = true

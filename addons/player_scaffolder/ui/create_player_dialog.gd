@@ -18,24 +18,25 @@ const PRESETS = {
 @onready var health_cb: CheckBox = %HealthSystemCB
 @onready var inventory_cb: CheckBox = %InventoryCB
 @onready var stamina_cb: CheckBox = %StaminaCB
-@onready var crosshair_cb: CheckBox = %CrosshairCB
 @onready var player_name_le: LineEdit = %PlayerNameLE
 @onready var target_path_le: LineEdit = %TargetPathLE
 @onready var script_path_le: LineEdit = %ScriptPathLE
 @onready var status_lbl: Label = %StatusLbl
  
 func _ready() -> void:
-	canceled.connect(hide)
-	confirmed.connect(_on_generate_pressed)
 	if genre_btn.item_count == 0:
 		for genre in PRESETS.keys():
 			genre_btn.add_item(genre)
-	if camera_btn.item_count == 0:
 		camera_btn.add_item("FPS")
 		camera_btn.add_item("Third Person")
 		camera_btn.add_item("FPS + TP Toggle")
-	genre_btn.connect("item_selected", _on_genre_selected)
+		genre_btn.item_selected.connect(_on_genre_selected)
+	if not canceled.is_connected(hide):
+		canceled.connect(hide)
+	if not confirmed.is_connected(_on_generate_pressed):
+		confirmed.connect(_on_generate_pressed)
 	_on_genre_selected(0)
+	status_lbl.text = ""
  
 func _on_genre_selected(index: int) -> void:
 	var preset = PRESETS.values()[index]
@@ -58,7 +59,6 @@ func _get_config() -> Dictionary:
 		"health": health_cb.button_pressed,
 		"inventory": inventory_cb.button_pressed,
 		"stamina": stamina_cb.button_pressed,
-		"crosshair": crosshair_cb.button_pressed,
 		"player_name": player_name_le.text,
 		"target_path": target_path_le.text,
 		"script_path": script_path_le.text,
@@ -77,6 +77,8 @@ func _on_generate_pressed() -> void:
 		return
 	PlayerGenerator.generate(config)
 	_set_status("✓ Player '%s' created successfully." % config["player_name"], false)
+	await get_tree().create_timer(1.5).timeout
+	hide()
  
 func _set_status(text: String, is_error: bool) -> void:
 	status_lbl.text = text
