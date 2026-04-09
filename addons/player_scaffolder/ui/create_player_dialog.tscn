@@ -6,7 +6,7 @@
 oversampling_override = 1.0
 title = "Player Scaffolder"
 initial_position = 1
-size = Vector2i(376, 543)
+size = Vector2i(376, 546)
 visible = true
 ok_button_text = "Generate"
 dialog_hide_on_ok = false
@@ -163,17 +163,29 @@ text = "Output"
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/Output/VBoxContainer" unique_id=295945413]
 layout_mode = 2
 
+[node name="PlayerLbl" type="Label" parent="VBoxContainer/Output/VBoxContainer" unique_id=1794214019]
+layout_mode = 2
+text = "Name:"
+
 [node name="PlayerNameLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=251358252]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Player"
 placeholder_text = "Your player name"
 
+[node name="TargetPathLbl" type="Label" parent="VBoxContainer/Output/VBoxContainer" unique_id=2091613356]
+layout_mode = 2
+text = "Target scene path:"
+
 [node name="TargetPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1443760247]
 unique_name_in_owner = true
 layout_mode = 2
 text = "res://Scenes/Player/"
 placeholder_text = "res://scenes/player/"
+
+[node name="ScriptPathLbl" type="Label" parent="VBoxContainer/Output/VBoxContainer" unique_id=1650618364]
+layout_mode = 2
+text = "Target script path:"
 
 [node name="ScriptPathLE" type="LineEdit" parent="VBoxContainer/Output/VBoxContainer" unique_id=1543401181]
 unique_name_in_owner = true

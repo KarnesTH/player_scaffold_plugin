@@ -1,9 +1,18 @@
 @tool
+## Player Scaffolder - Generator
+##
+## Generates a genre-based player scene with scripts, input actions and HUD.
+##
+## @author KarnesTH
+## @version 1.1
 class_name PlayerGenerator
- 
+
 const DEFAULT_SCENE_PATH = "res://scenes/player/"
 const DEFAULT_SCRIPT_PATH = "res://scripts/player/"
- 
+
+## Generates the complete player scene based on the provided config dictionary.
+## Creates scene and script directories, writes all scripts, builds the scene tree,
+## registers input actions and opens the result in the editor.
 static func generate(config: Dictionary) -> void:
 	var target_path = config["target_path"]
 	if target_path.is_empty():
@@ -62,6 +71,7 @@ static func generate(config: Dictionary) -> void:
 	EditorInterface.open_scene_from_path(file_path)
 	print("Player Scaffolder: Scene generated → ", file_path)
  
+## Writes a generated script string to disk. Skips if the file already exists.
 static func _write_script(script_name: String, target_path: String, content: String) -> void:
 	var dst = target_path + "%s.gd" % script_name
 	if not FileAccess.file_exists(dst):
@@ -69,6 +79,7 @@ static func _write_script(script_name: String, target_path: String, content: Str
 		file.store_string(content)
 		file.close()
  
+## Copies a template script from the addon to the target path. Skips if already exists.
 static func _copy_script(script_name: String, target_path: String) -> void:
 	var src = "res://addons/player_scaffolder/templates/%s.gd" % script_name
 	var dst = target_path + "%s.gd" % script_name
@@ -78,6 +89,8 @@ static func _copy_script(script_name: String, target_path: String) -> void:
 			ProjectSettings.globalize_path(dst)
 		)
  
+## Adds camera nodes to the player root based on camera_type.
+## 0 = FPS, 1 = Third Person, 2 = FPS + TP Toggle.
 static func _setup_camera(root: Node, camera_type: int) -> void:
 	match camera_type:
 		0: # FPS
@@ -118,6 +131,7 @@ static func _setup_camera(root: Node, camera_type: int) -> void:
 			arm.add_child(tp_cam)
 			tp_cam.owner = root
  
+## Adds an InteractRay (RayCast3D) node with the interact script attached.
 static func _add_interact(root: Node, script_path: String) -> void:
 	var ray := RayCast3D.new()
 	ray.name = "InteractRay"
@@ -127,6 +141,7 @@ static func _add_interact(root: Node, script_path: String) -> void:
 	ray.owner = root
 	ray.set_script(load(script_path + "interact.gd"))
  
+## Adds a generic Node with the matching script from script_path if it exists.
 static func _add_node(root: Node, node_name: String, script_path: String) -> void:
 	var node := Node.new()
 	node.name = node_name
@@ -136,6 +151,8 @@ static func _add_node(root: Node, node_name: String, script_path: String) -> voi
 	root.add_child(node)
 	node.owner = root
  
+## Registers all required input actions into ProjectSettings based on config.
+## Saves project.godot and reloads the InputMap immediately.
 static func _register_inputs(config: Dictionary) -> void:
 	var is_shooter: bool = config["genre"].begins_with("Shooter")
 	var actions: Dictionary = {
@@ -153,6 +170,9 @@ static func _register_inputs(config: Dictionary) -> void:
 		actions["jump"] = { "key": KEY_SPACE }
 	if config["prone"]:
 		actions["prone"] = { "key": KEY_Z }
+	if config["lean"]:
+		actions["lean_left"] = { "key": KEY_Q }
+		actions["lean_right"] = { "key": KEY_E }
 	if config["camera"] == 2:
 		actions["toggle_view"] = { "key": KEY_V }
 		if not is_shooter:
@@ -178,6 +198,8 @@ static func _register_inputs(config: Dictionary) -> void:
 	InputMap.load_from_project_settings()
 	print("Player Scaffolder: Input actions have been registered — it is recommended that you restart the editor so that they appear in the Input Map Editor.")
  
+## Builds the HUD scene tree (CanvasLayer → Control → VBoxContainer → Crosshair + InteractionLbl)
+## and attaches it as a child of the player root.
 static func _build_hud(root: Node) -> void:
 	var canvas := CanvasLayer.new()
 	canvas.name = "HUD"
@@ -193,19 +215,20 @@ static func _build_hud(root: Node) -> void:
 	vbox.name = "VBoxContainer"
 	vbox.set_anchors_preset(Control.PRESET_CENTER)
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	control.add_child(vbox)
 	vbox.owner = root
 	var crosshair := Panel.new()
 	crosshair.name = "Crosshair"
-	crosshair.custom_minimum_size = Vector2(4, 4)
+	crosshair.custom_minimum_size = Vector2(6, 6)
+	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color.WHITE
-	style.corner_radius_top_left = 2
-	style.corner_radius_top_right = 2
-	style.corner_radius_bottom_left = 2
-	style.corner_radius_bottom_right = 2
+	style.corner_radius_top_left = 3
+	style.corner_radius_top_right = 3
+	style.corner_radius_bottom_left = 3
+	style.corner_radius_bottom_right = 3
 	crosshair.add_theme_stylebox_override("panel", style)
-	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(crosshair)
 	crosshair.owner = root
 	var interaction_lbl := Label.new()
@@ -216,23 +239,42 @@ static func _build_hud(root: Node) -> void:
 	vbox.add_child(interaction_lbl)
 	interaction_lbl.owner = root
 
+## Dynamically builds the player_controller.gd script content as a String
+## based on the config flags. Only includes code for enabled features.
 static func _build_player_script(config: Dictionary) -> String:
 	var is_shooter: bool = config["genre"].begins_with("Shooter")
 	var has_tp: bool = config["camera"] == 2
 	var has_zoom := has_tp and not is_shooter
 	var s := ""
+	s += "## Player Controller\n"
+	s += "##\n"
+	s += "## Generated by Player Scaffolder. Handles movement, camera, and interaction.\n"
+	s += "## Extend this script to add game-specific behaviour.\n"
+	s += "##\n"
+	s += "## @author KarnesTH\n"
+	s += "## @version 1.0\n"
 	s += "extends CharacterBody3D\n\n"
+	s += "@export_category(\"Movement\")\n"
 	s += "@export var base_speed := 6.0\n"
 	if config["sprint"]:
 		s += "@export var sprint_multiplier := 1.5\n"
+	if config["crouch"]:
+		s += "@export var crouch_speed_multiplier := 0.5\n"
+	if config["prone"]:
+		s += "@export var prone_speed_multiplier := 0.3\n"
 	if config["jump"]:
 		s += "@export var jump_height := 1.2\n"
 		s += "@export var fall_multiplier := 2.5\n"
+	s += "@export var step_height := 0.3\n"
 	s += "\n@export_category(\"Camera\")\n"
 	s += "@export var mouse_sensitivity: float = 0.00075\n"
 	s += "@export var camera_speed: float = 30.0\n"
 	s += "@export var pitch_min: float = -90.0\n"
 	s += "@export var pitch_max: float = 90.0\n"
+	if config["lean"]:
+		s += "@export var lean_angle: float = 15.0\n"
+		s += "@export var lean_offset: float = 0.3\n"
+		s += "@export var lean_speed: float = 8.0\n"
 	if has_zoom:
 		s += "\n@export_category(\"Third Person\")\n"
 		s += "@export var zoom_min: float = 1.5\n"
@@ -240,6 +282,8 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "@export var zoom_sensitivity: float = 0.4\n"
 	s += "\nvar gravity: float = ProjectSettings.get_setting(\"physics/3d/default_gravity\")\n"
 	s += "var _look := Vector2.ZERO\n"
+	if config["lean"]:
+		s += "var _lean_amount: float = 0.0\n"
 	if config["crouch"]:
 		s += "var _is_crouching := false\n"
 	if config["prone"]:
@@ -254,18 +298,21 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "var zoom := zoom_min\n"
 	s += "\n@onready var camera: Camera3D = $Camera3D\n"
 	s += "@onready var camera_target: Node3D = $CameraTarget\n"
-	s += "\nfunc _ready() -> void:\n"
+	s += "\n## Called when the node enters the scene tree. Sets mouse to captured mode.\n"
+	s += "func _ready() -> void:\n"
 	s += "\tInput.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)\n"
 	if has_tp:
 		s += "\tif has_node(\"%SpringArm3D\") and has_node(\"%ThirdPersonCamera\"):\n"
 		s += "\t\tspring_arm = %SpringArm3D\n"
 		s += "\t\tthird_person_camera = %ThirdPersonCamera\n"
 		s += "\t\t_has_tp = true\n"
-	s += "\nfunc _process(delta: float) -> void:\n"
+	s += "\n## Smoothly interpolates the camera to follow the camera target each frame.\n"
+	s += "func _process(delta: float) -> void:\n"
 	s += "\tcamera.global_transform = camera.global_transform.interpolate_with(\n"
 	s += "\t\tcamera_target.global_transform, clamp(camera_speed * delta, 0.0, 1.0))\n"
 	s += "\tcamera.global_position = camera_target.global_position\n"
-	s += "\nfunc _physics_process(delta: float) -> void:\n"
+	s += "\n## Handles movement, gravity, jumping, crouching, prone and step logic each physics tick.\n"
+	s += "func _physics_process(delta: float) -> void:\n"
 	s += "\t_apply_camera_rotation()\n"
 	if has_zoom:
 		s += "\tif _has_tp:\n"
@@ -281,9 +328,18 @@ static func _build_player_script(config: Dictionary) -> String:
 	else:
 		s += "\tif not is_on_floor():\n"
 		s += "\t\tvelocity.y -= gravity * delta\n"
+	s += "\t_check_step()\n"
+	if config["lean"]:
+		s += "\t_handle_lean(delta)\n"
 	s += "\tvar direction := _get_movement_direction()\n"
-	if config["sprint"]:
-		s += "\tvar speed := base_speed * (sprint_multiplier if Input.is_action_pressed(\"sprint\") else 1.0)\n"
+	if config["sprint"] or config["crouch"] or config["prone"]:
+		s += "\tvar speed := base_speed\n"
+		if config["sprint"]:
+			s += "\tif Input.is_action_pressed(\"sprint\"): speed *= sprint_multiplier\n"
+		if config["crouch"]:
+			s += "\tif _is_crouching: speed *= crouch_speed_multiplier\n"
+		if config["prone"]:
+			s += "\tif _is_prone: speed *= prone_speed_multiplier\n"
 	else:
 		s += "\tvar speed := base_speed\n"
 	s += "\tif direction:\n"
@@ -299,16 +355,19 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "\tif Input.is_action_just_pressed(\"prone\"):\n"
 		s += "\t\t_toggle_prone()\n"
 	s += "\tmove_and_slide()\n"
-	s += "\nfunc _get_movement_direction() -> Vector3:\n"
+	s += "\n## Returns the locally oriented movement direction based on input.\n"
+	s += "func _get_movement_direction() -> Vector3:\n"
 	s += "\tvar input_dir := Input.get_vector(\"move_left\", \"move_right\", \"move_forward\", \"move_back\")\n"
 	s += "\treturn (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()\n"
-	s += "\nfunc _apply_camera_rotation() -> void:\n"
+	s += "\n## Applies mouse look rotation to the player and camera target.\n"
+	s += "func _apply_camera_rotation() -> void:\n"
 	s += "\trotate_y(_look.x)\n"
 	s += "\tcamera_target.rotate_x(_look.y)\n"
 	s += "\tcamera_target.rotation.x = clamp(camera_target.rotation.x, deg_to_rad(pitch_min), deg_to_rad(pitch_max))\n"
 	s += "\t_look = Vector2.ZERO\n"
 	if config["crouch"]:
-		s += "\nfunc _toggle_crouch() -> void:\n"
+		s += "\n## Toggles crouch state, adjusting CollisionShape and camera height.\n"
+		s += "func _toggle_crouch() -> void:\n"
 		s += "\t_is_crouching = not _is_crouching\n"
 		s += "\tvar col := $CollisionShape3D\n"
 		s += "\tvar capsule := col.shape as CapsuleShape3D\n"
@@ -321,7 +380,8 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "\t\tcol.position.y = 0.9\n"
 		s += "\t\tcamera_target.position.y = 1.6\n"
 	if config["prone"]:
-		s += "\nfunc _toggle_prone() -> void:\n"
+		s += "\n## Toggles prone state, adjusting CollisionShape and camera height.\n## Exits crouch first if active.\n"
+		s += "func _toggle_prone() -> void:\n"
 		if config["crouch"]:
 			s += "\tif _is_crouching:\n"
 			s += "\t\t_toggle_crouch()\n"
@@ -336,11 +396,48 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "\t\tcapsule.height = 1.8\n"
 		s += "\t\tcol.position.y = 0.9\n"
 		s += "\t\tcamera_target.position.y = 1.6\n"
+	s += "\n## Checks for small steps ahead and nudges the player upward to climb them.\n## Only active when on the floor and moving.\n"
+	s += "func _check_step() -> void:\n"
+	s += "\tif velocity.length() < 0.1 or not is_on_floor():\n"
+	s += "\t\treturn\n"
+	s += "\tvar forward := -global_transform.basis.z.normalized()\n"
+	s += "\tvar step_origin := global_position + forward * 0.4\n"
+	s += "\tvar space := get_world_3d().direct_space_state\n"
+	s += "\tvar ray_down := PhysicsRayQueryParameters3D.create(\n"
+	s += "\t\tstep_origin + Vector3.UP * step_height,\n"
+	s += "\t\tstep_origin + Vector3.DOWN * 0.05,\n"
+	s += "\t\tcollision_mask\n"
+	s += "\t)\n"
+	s += "\tray_down.exclude = [self]\n"
+	s += "\tvar hit := space.intersect_ray(ray_down)\n"
+	s += "\tif hit:\n"
+	s += "\t\tvar step_y: float = hit.position.y - global_position.y\n"
+	s += "\t\tif step_y > 0.01 and step_y <= step_height:\n"
+	s += "\t\t\tglobal_position.y += step_y\n"
+	s += "\n"
+	if config["lean"]:
+		s += "\n## Handles camera lean left/right via Q and E. Disabled while prone.\n"
+		s += "func _handle_lean(delta: float) -> void:\n"
+		if config["prone"]:
+			s += "\tif _is_prone:\n"
+			s += "\t\t_lean_amount = move_toward(_lean_amount, 0.0, lean_speed * delta)\n"
+			s += "\t\tcamera_target.rotation.z = deg_to_rad(_lean_amount)\n"
+			s += "\t\tcamera_target.position.x = _lean_amount / lean_angle * lean_offset\n"
+			s += "\t\treturn\n"
+		s += "\tvar target_lean := 0.0\n"
+		s += "\tif Input.is_action_pressed(\"lean_left\"): target_lean = lean_angle\n"
+		s += "\telif Input.is_action_pressed(\"lean_right\"): target_lean = -lean_angle\n"
+		s += "\t_lean_amount = lerp(_lean_amount, target_lean, lean_speed * delta)\n"
+		s += "\tcamera_target.rotation.z = deg_to_rad(_lean_amount)\n"
+		s += "\tcamera_target.position.x = _lean_amount / lean_angle * lean_offset\n"
+		s += "\n"
 	if has_zoom:
-		s += "\nfunc _smooth_zoom(delta: float) -> void:\n"
+		s += "\n## Smoothly interpolates the SpringArm3D length for third person zoom.\n"
+		s += "func _smooth_zoom(delta: float) -> void:\n"
 		s += "\tspring_arm.spring_length = lerp(spring_arm.spring_length, zoom, delta * 10.0)\n"
 	if has_tp:
-		s += "\nfunc _cycle_view() -> void:\n"
+		s += "\n## Toggles between first and third person camera view.\n"
+		s += "func _cycle_view() -> void:\n"
 		s += "\tmatch view:\n"
 		s += "\t\tVIEW.FIRST_PERSON:\n"
 		s += "\t\t\tview = VIEW.THIRD_PERSON\n"
@@ -353,7 +450,8 @@ static func _build_player_script(config: Dictionary) -> String:
 		s += "\t\t\tview = VIEW.FIRST_PERSON\n"
 		s += "\t\t\tcamera.fov = get_viewport().get_camera_3d().fov\n"
 		s += "\t\t\tcamera.current = true\n"
-	s += "\nfunc _unhandled_input(event: InputEvent) -> void:\n"
+	s += "\n## Handles mouse look, escape to release mouse, view toggle and zoom input.\n"
+	s += "func _unhandled_input(event: InputEvent) -> void:\n"
 	s += "\tif event is InputEventMouseMotion:\n"
 	s += "\t\tif Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:\n"
 	s += "\t\t\t_look = -event.relative * mouse_sensitivity\n"

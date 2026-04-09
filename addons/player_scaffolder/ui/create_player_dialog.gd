@@ -1,6 +1,14 @@
+## Create Player Dialog
+##
+## Editor dialog for configuring and generating a genre-based player scene.
+## Genre presets fill in sensible defaults for all checkboxes,
+## all options remain manually adjustable before generating.
+##
+## @author KarnesTH
+## @version 1.0
 @tool
 extends AcceptDialog
- 
+
 const PRESETS = {
 	"Horror": { "sprint": true, "crouch": true, "jump": false, "prone": false, "lean": false, "inventory": true, "health": true, "stamina": false },
 	"Survival": { "sprint": true, "crouch": true, "jump": true, "prone": false, "lean": false, "inventory": true, "health": true, "stamina": true },
@@ -8,7 +16,7 @@ const PRESETS = {
 	"Shooter – Classic": { "sprint": true, "crouch": true, "jump": true, "prone": false, "lean": true, "inventory": false, "health": true, "stamina": false },
 	"Shooter – BR/Extraction": { "sprint": true, "crouch": true, "jump": true, "prone": true, "lean": true, "inventory": true, "health": true, "stamina": true },
 }
- 
+
 @onready var genre_btn: OptionButton = %GerneOBtn
 @onready var camera_btn: OptionButton = %CameraTypeOBtn
 @onready var sprint_cb: CheckBox = %SprintCB
@@ -23,7 +31,9 @@ const PRESETS = {
 @onready var target_path_le: LineEdit = %TargetPathLE
 @onready var script_path_le: LineEdit = %ScriptPathLE
 @onready var status_lbl: Label = %StatusLbl
- 
+
+## Called when the node enters the scene tree.
+## Populates dropdowns, connects signals and applies the default preset.
 func _ready() -> void:
 	if genre_btn.item_count == 0:
 		for genre in PRESETS.keys():
@@ -38,7 +48,8 @@ func _ready() -> void:
 		confirmed.connect(_on_generate_pressed)
 	_on_genre_selected(0)
 	status_lbl.text = ""
- 
+
+## Applies the preset for the selected genre to all checkboxes.
 func _on_genre_selected(index: int) -> void:
 	var preset = PRESETS.values()[index]
 	sprint_cb.button_pressed = preset["sprint"]
@@ -49,7 +60,8 @@ func _on_genre_selected(index: int) -> void:
 	health_cb.button_pressed = preset["health"]
 	inventory_cb.button_pressed = preset["inventory"]
 	stamina_cb.button_pressed = preset["stamina"]
- 
+
+## Collects all current dialog values into a config Dictionary.
 func _get_config() -> Dictionary:
 	return {
 		"genre": genre_btn.get_item_text(genre_btn.selected),
@@ -66,7 +78,10 @@ func _get_config() -> Dictionary:
 		"target_path": target_path_le.text,
 		"script_path": script_path_le.text,
 	}
- 
+
+## Validates the config and triggers player generation.
+## Shows a status message on success or error.
+## Closes the dialog automatically after 1.5 seconds on success.
 func _on_generate_pressed() -> void:
 	var config = _get_config()
 	if config["player_name"].is_empty():
@@ -82,7 +97,9 @@ func _on_generate_pressed() -> void:
 	_set_status("✓ Player '%s' created successfully." % config["player_name"], false)
 	await get_tree().create_timer(1.5).timeout
 	hide()
- 
+
+## Updates the status label text and color.
+## [param is_error] sets the color to red on true, green on false.
 func _set_status(text: String, is_error: bool) -> void:
 	status_lbl.text = text
 	status_lbl.modulate = Color.RED if is_error else Color.GREEN

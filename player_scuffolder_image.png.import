@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpv5vndwsr3wp"
-path="res://.godot/imported/player_scuffolder_image.png-f795caaf53e4e24d124731227d5c9cce.ctex"
+uid="uid://bsjl4rhk5yov7"
+path="res://.godot/imported/player_scuffolder_image.png-cb2752383dada1457c77a86d71dd01fb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/player_scaffolder/player_scuffolder_image.png"
-dest_files=["res://.godot/imported/player_scuffolder_image.png-f795caaf53e4e24d124731227d5c9cce.ctex"]
+source_file="res://player_scuffolder_image.png"
+dest_files=["res://.godot/imported/player_scuffolder_image.png-cb2752383dada1457c77a86d71dd01fb.ctex"]
 
 [params]
 
